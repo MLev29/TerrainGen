@@ -13,8 +13,8 @@ namespace src
 	{
 		public:
 			Window(void) = delete;
-			Window(std::string const& wndName, int const width, int const height);
-			~Window(void);
+			Window(const char* wndName, int const width, int const height);
+			~Window(void) = default;
 
 			
 			template <math::math_type::NumericType Type>
@@ -39,9 +39,9 @@ namespace src
 			operator GLFWwindow*(void) const;
 
 		private:
+			std::string m_name;
 			GLFWwindow* m_windowPtr;
 			math::Vector2<int> m_size;
-			const char* m_name;
 			float m_aspectRatio;
 
 	};

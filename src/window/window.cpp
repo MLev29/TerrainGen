@@ -2,17 +2,14 @@
 #include "window/WindowHelperFunction.h"
 #include "utility/GraphicsFunctions.h"
 
-src::Window::Window(std::string const& wndName, int const width, int const height)
-    : m_name(wndName.c_str())
+
+
+src::Window::Window(const char* wndName, int const width, int const height)
+    : m_name(wndName)
 {
     m_size = {width, height};
     m_aspectRatio = width / height;
     m_windowPtr = nullptr;
-}
-
-src::Window::~Window(void)
-{
-    // TODO: call destructor
 }
 
 float src::Window::GetAspectRatio(void) const noexcept
@@ -32,13 +29,12 @@ void src::Window::SetAspectRatio(float const& aspectRatio)
 
 int src::Window::Init(void)
 {
-
     // Init window lib (GLFW)
     if (InitWndLib())
         return -1;
 
     // Create window
-    m_windowPtr = CreateWindow(m_name, m_size);
+    m_windowPtr = CreateWindow(m_name.c_str(), m_size);
     if (!m_windowPtr)
     {
         std::printf("Failed to create window, pointer is null.\n");

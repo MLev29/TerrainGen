@@ -43,6 +43,8 @@ void src::CloseWindow(GLFWwindow* windowPtr)
 {
 	if (windowPtr)
 		glfwSetWindowShouldClose(windowPtr, true);
+
+	glfwTerminate();
 }
 
 bool src::ShouldWndClose(GLFWwindow* windowPtr)
