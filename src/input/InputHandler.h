@@ -85,16 +85,28 @@ namespace src
 	template<math::math_type::NumericType Type>
 	inline math::Vector2<Type> InputHandler::GetCursorPosition(void)
 	{
-		return math::Vector2<Type>();
+		return math::Vector2<Type>
+		(
+			static_cast<Type>(GetInstance()->m_mousePos[0]),
+			static_cast<Type>(GetInstance()->m_mousePos[1])
+		);
 	}
 	template<math::math_type::NumericType Type>
 	inline math::Vector2<Type> InputHandler::GetCursorDeltaPosition(void)
 	{
-		return math::Vector2<Type>();
+		return math::Vector2<Type>
+			(
+				static_cast<Type>(GetInstance()->m_mousePosDelta[0]),
+				static_cast<Type>(GetInstance()->m_mousePosDelta[1])
+			);
 	}
 	template<math::math_type::NumericType Type>
 	inline math::Vector2<Type> InputHandler::GetScrollDelta(void)
 	{
-		return math::Vector2<Type>();
+		return math::Vector2<Type>
+		(
+			static_cast<Type>(GetInstance()->m_scrollDelta[0]),
+			static_cast<Type>(GetInstance()->m_scrollDelta[1])
+		);
 	}
 }
