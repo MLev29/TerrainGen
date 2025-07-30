@@ -16,7 +16,7 @@ namespace src
 		template<typename TResourceType>
 		static TResourceType* Load(std::string const& fileName);
 
-		static void LoadShader(
+		static class ShaderProgram* LoadShader(
 			const char* shaderProgramName,
 			const char* vertShader,
 			const char* fragShader
@@ -43,21 +43,21 @@ namespace src
 		bool hasResource = GetInstance()->m_resources.contains(fileName);
 
 		return (hasResource) ? 
-					dynamic_cast<TResourceType*>(m_resources[fileName] :
+					dynamic_cast<TResourceType*>(GetInstance()->m_resources[fileName]) :
 					nullptr;
 	}
 
 	template<typename TResourceType>
 	inline TResourceType* ResourceManager::Load(std::string const& fileName)
 	{
-		if (!GetInstance()->GetResource(fileName))
+		if (!GetInstance()->HasResource(fileName))
 		{
 			GetInstance()->m_resources[fileName] = new TResourceType();
-			GetInstance()->m_resources[fileName]->LoadResource();
+			GetInstance()->m_resources[fileName]->LoadResource(fileName.c_str());
 
 			std::printf("Successfully loaded resource '%s'.\n", fileName.c_str());
 
-			return GetInstance()->m_resources[fileName];
+			return GetInstance()->GetResource<TResourceType>(fileName);
 		}
 		else
 			std::printf("Failed to load resource, resource already loaded.\n");

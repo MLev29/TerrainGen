@@ -1,14 +1,24 @@
 #include "ResourceManager.h"
+#include "shader/Shader.h"
 
-void src::ResourceManager::LoadShader(const char* shaderProgramName, const char* vertShader, const char* fragShader)
+src::ResourceManager* src::ResourceManager::m_instance = nullptr;
+
+src::ShaderProgram* src::ResourceManager::LoadShader(const char* shaderProgramName, const char* vertShader, const char* fragShader)
 {
 	if (GetInstance()->HasResource(shaderProgramName))
 	{
 		std::printf("Failed to load shader '%s', shader already exists.\n", shaderProgramName);
-		return;
+		return nullptr;
 	}
 
-	// TODO: load shader...
+	ShaderProgram* newProgram = new ShaderProgram();
+	GetInstance()->m_resources[shaderProgramName] = newProgram;
+
+	newProgram->m_vertexShader = vertShader;
+	newProgram->m_fragShader = fragShader;
+	newProgram->CreateProgram();
+
+	return newProgram;
 }
 
 void src::ResourceManager::Unload(std::string const& fileName)
