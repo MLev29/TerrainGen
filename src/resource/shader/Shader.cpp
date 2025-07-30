@@ -10,6 +10,11 @@ src::ShaderProgram::ShaderProgram(const char* vertexShader, const char* fragShad
 	CreateProgram();
 }
 
+src::ShaderProgram::~ShaderProgram(void)
+{
+	glDeleteProgram(m_programID);
+}
+
 bool src::ShaderProgram::LoadResource(const char* filePath)
 {
 	(void) filePath;
@@ -156,11 +161,8 @@ void src::ShaderProgram::CreateProgram(void)
         return;
      
 	// Resource manager will only load if resource does not exist
-	ResourceManager::Load<Shader>(m_vertexShader);
-	ResourceManager::Load<Shader>(m_fragShader);
-	
-	Shader* vShader = ResourceManager::GetResource<Shader>(m_vertexShader);
-	Shader* fShader = ResourceManager::GetResource<Shader>(m_fragShader);
+	Shader* vShader = ResourceManager::Load<Shader>(m_vertexShader);
+	Shader* fShader = ResourceManager::Load<Shader>(m_fragShader);
 
     if (!vShader || !fShader)
     {
@@ -196,5 +198,4 @@ void src::ShaderProgram::CreateProgram(void)
 
 	glDeleteShader(vShader->GetShader());
 	glDeleteShader(fShader->GetShader());
-
 }

@@ -18,7 +18,7 @@ namespace src
 	public:
 		ShaderProgram(void) = default;
 		ShaderProgram(const char* vertexShader, const char* fragShader);
-		virtual ~ShaderProgram(void) override = default;
+		virtual ~ShaderProgram(void) override;
 
 		bool LoadResource(const char* filePath) override;
 
