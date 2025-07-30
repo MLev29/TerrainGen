@@ -72,7 +72,7 @@ void src::SizeCallback(GLFWwindow* windowPtr, int width, int height)
 	if (wndClass)
 	{
 		// Update window transform
-		float aspectRatio = (height == 0) ? static_cast<float>(width / height) : width;
+		float aspectRatio = (height > 0) ? static_cast<float>(width) / static_cast<float>(height) : width;
 
 		wndClass->SetSize(width, height);
 		wndClass->SetAspectRatio(aspectRatio);

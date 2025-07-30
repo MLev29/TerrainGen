@@ -8,7 +8,7 @@ src::Window::Window(const char* wndName, int const width, int const height)
     : m_name(wndName)
 {
     m_size = {width, height};
-    m_aspectRatio = width / height;
+    m_aspectRatio = float(width) / float(height);
     m_windowPtr = nullptr;
 }
 
