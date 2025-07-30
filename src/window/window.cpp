@@ -52,7 +52,7 @@ int src::Window::Init(void)
 
 void src::Window::Update(void)
 {
-    Clear();
+    //Clear();
 
     UpdateWindow(*this);
 }
