@@ -12,3 +12,8 @@ add_subdirectory(src)
 if (MSVC)
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT src)
 endif()
+
+if (NOT EXISTS {CMAKE_SOURCE_DIR}/workspace)
+    message("Failed to locate workspace directory, attempting to creating directory...")
+    file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/workspace)
+endif()

@@ -50,4 +50,5 @@ if (MSVC)
 	# Disable linker warning for glfw3's missing debug info
 	target_link_options(${TARGET_NAME} PRIVATE /IGNORE:4099)
 	target_compile_options(${TARGET_NAME} PRIVATE /W4 /WX)
+	set_target_properties(${TARGET_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/workspace)
 endif()
