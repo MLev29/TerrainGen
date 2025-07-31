@@ -18,6 +18,7 @@ namespace src
 	public:
 		ShaderProgram(void) = default;
 		ShaderProgram(const char* vertexShader, const char* fragShader);
+		ShaderProgram(const char* vertexShader, const char* fragShader, const char* tesControlShader, const char* tesEvalShader);
 		virtual ~ShaderProgram(void) override;
 
 		bool LoadResource(const char* filePath) override;
@@ -59,9 +60,12 @@ namespace src
 
 	private:
 		void CreateProgram(void);
+		void CreateTessellationProgram(void);
 
 		std::string m_vertexShader;
 		std::string m_fragShader;
+		std::string m_tesCtrlShader;
+		std::string m_tesEvalShader;
 		
 		unsigned int m_programID = 0;
 

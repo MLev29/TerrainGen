@@ -22,6 +22,14 @@ namespace src
 			const char* fragShader
 		);
 
+		static class ShaderProgram* LoadShader(
+			const char* shaderProgramName,
+			const char* vertShader,
+			const char* fragShader,
+			const char* tesCtrlShader,
+			const char* tesEvalShader
+		);
+
 		static void Unload(std::string const& fileName);
 		static void ShutDown(void);
 

@@ -80,6 +80,13 @@ src::EShaderType src::Shader::ShaderType(const char* fileName) const
 		return EShaderType::FRAGMENT_SHADER;
 	case 'g':
 		return EShaderType::GEOMETRY_SHADER;
+	case 't':
+		if (fileName[pos + 4] == 'c')
+			return EShaderType::TESSELLATION_CONTROL_SHADER;
+		else if (fileName[pos + 4] == 'e')
+			return EShaderType::TESSELLATION_EVAL_SHADER;
+		else
+			return EShaderType::INVALID_SHADER;
 	default:
 		return EShaderType::INVALID_SHADER;
 	}

@@ -21,6 +21,26 @@ src::ShaderProgram* src::ResourceManager::LoadShader(const char* shaderProgramNa
 	return newProgram;
 }
 
+src::ShaderProgram* src::ResourceManager::LoadShader(const char* shaderProgramName, const char* vertShader, const char* fragShader, const char* tesCtrlShader, const char* tesEvalShader)
+{
+	if (GetInstance()->HasResource(shaderProgramName))
+	{
+		std::printf("Failed to load shader '%s', shader already exists.\n", shaderProgramName);
+		return nullptr;
+	}
+
+	ShaderProgram* newProgram = new ShaderProgram();
+	GetInstance()->m_resources[shaderProgramName] = newProgram;
+
+	newProgram->m_vertexShader = vertShader;
+	newProgram->m_fragShader = fragShader;
+	newProgram->m_tesCtrlShader = tesCtrlShader;
+	newProgram->m_tesEvalShader = tesEvalShader;
+	newProgram->CreateTessellationProgram();
+
+	return newProgram;
+}
+
 void src::ResourceManager::Unload(std::string const& fileName)
 {
 	if (GetInstance()->HasResource(fileName))

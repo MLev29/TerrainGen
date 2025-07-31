@@ -10,6 +10,12 @@ src::ShaderProgram::ShaderProgram(const char* vertexShader, const char* fragShad
 	CreateProgram();
 }
 
+src::ShaderProgram::ShaderProgram(const char* vertexShader, const char* fragShader, const char* tesControlShader, const char* tesEvalShader)
+	: m_vertexShader(vertexShader), m_fragShader(fragShader), m_tesCtrlShader(tesControlShader), m_tesEvalShader(tesEvalShader), m_programID(0)
+{
+	CreateTessellationProgram();
+}
+
 src::ShaderProgram::~ShaderProgram(void)
 {
 	glDeleteProgram(m_programID);
@@ -198,4 +204,58 @@ void src::ShaderProgram::CreateProgram(void)
 
 	glDeleteShader(vShader->GetShader());
 	glDeleteShader(fShader->GetShader());
+}
+
+void src::ShaderProgram::CreateTessellationProgram(void)
+{
+	// Don't create OpenGL program twice
+	if (m_programID)
+		return;
+
+	// Resource manager will only load if resource does not exist
+	Shader* vShader = ResourceManager::Load<Shader>(m_vertexShader);
+	Shader* fShader = ResourceManager::Load<Shader>(m_fragShader);
+	Shader* tcShader = ResourceManager::Load<Shader>(m_tesCtrlShader);
+	Shader* teShader = ResourceManager::Load<Shader>(m_tesEvalShader);
+
+	if (!vShader || !fShader || !tcShader || !teShader)
+	{
+		std::printf("Failed to compute shader.\n");
+		return;
+	}
+
+	if (!vShader->GetShaderType() ||
+		!fShader->GetShaderType() ||
+		!tcShader->GetShaderType() ||
+		!teShader->GetShaderType())
+	{
+		std::printf("Failed to create shader program. Error: vertex or fragment or tessellation shader error.\n");
+		return;
+	}
+
+	m_programID = glCreateProgram();
+	glAttachShader(m_programID, vShader->GetShader());
+	glAttachShader(m_programID, fShader->GetShader());
+	glAttachShader(m_programID, tcShader->GetShader());
+	glAttachShader(m_programID, teShader->GetShader());
+	glLinkProgram(m_programID);
+
+	int result;
+	glGetProgramiv(m_programID, GL_LINK_STATUS, &result);
+
+	if (!result)
+	{
+		constexpr int bufferSize = 2500;
+		char infoLog[bufferSize];
+
+		glGetProgramInfoLog(m_programID, bufferSize, nullptr, infoLog);
+		std::printf("Failed to link shader program, reason: %s\n", infoLog);
+
+		return;
+	}
+
+	glDeleteShader(vShader->GetShader());
+	glDeleteShader(fShader->GetShader());
+	glDeleteShader(tcShader->GetShader());
+	glDeleteShader(teShader->GetShader());
 }
