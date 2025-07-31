@@ -12,6 +12,11 @@ src::Window::Window(const char* wndName, int const width, int const height)
     m_windowPtr = nullptr;
 }
 
+src::Window::~Window(void)
+{
+    src::CloseWindow(*this);
+}
+
 float src::Window::GetAspectRatio(void) const noexcept
 {
     return m_aspectRatio;

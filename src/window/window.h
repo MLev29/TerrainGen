@@ -14,7 +14,7 @@ namespace src
 		public:
 			Window(void) = delete;
 			Window(const char* wndName, int const width, int const height);
-			~Window(void) = default;
+			~Window(void);
 
 			
 			template <math::math_type::NumericType Type>
