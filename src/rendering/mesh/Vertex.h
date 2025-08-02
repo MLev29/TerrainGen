@@ -17,5 +17,7 @@ namespace src
 			: m_position(position), m_texCoord(texCoord), m_normal(normal), m_tangent(tangent), m_biTangent(biTangent)
 			{}
 
+		Vertex(void) = default;
+
 	};
 }
