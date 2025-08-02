@@ -21,8 +21,9 @@ namespace src
 		std::vector<int> GridIndices(unsigned int div);
 		std::vector<int> GridTesIndices(unsigned int div);
 		std::vector<math::Vector3<float>> Line(math::Vector3<float> start, math::Vector3<float> end, int div);
+		void RecalcAttributes(std::vector<Vertex>& vertices, unsigned int div);
 
-		void SetAttribute(unsigned int index, int size, unsigned int offset) const;
+		void SetAttribute(unsigned int& index, int size, unsigned int& offset) const;
 		void SetData(std::vector<math::Vector3<float>>& vertices, std::vector<int>& indices);
 		void SetData(std::vector<Vertex>& vertices, std::vector<int>& indices);
 

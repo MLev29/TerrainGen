@@ -1,6 +1,11 @@
 #include "Mesh.h"
 #include "utility/Buffer.h"
 #include "rendering/mesh/Vertex.h"
+#include "utility/PerlinNoise.h"
+
+
+#define DB_PERLIN_IMPL
+#include "stb/db_perlin.hpp"
 
 #include "glad/glad.h"
 
@@ -16,6 +21,8 @@ src::Grid::Grid(math::Vector2<float> minPos, math::Vector2<float> maxPos, unsign
 	);
 
 	std::vector<int> indices = GridTesIndices(divCount);
+
+	RecalcAttributes(vertices, divCount);
 
 	m_indexCount = static_cast<unsigned int>(indices.size());
 	SetData(vertices, indices);
@@ -66,7 +73,7 @@ std::vector<src::Vertex> src::Grid::GridVerticesWithAttributes(math::Vector3<flo
 
 	math::Vector3<float> vec03 = (v3 - v0) * divDenom;
 	math::Vector3<float> vec12 = (v2 - v1) * divDenom;
-
+	
 	for (unsigned int row = 0; row < div + 1; ++row)
 	{
 		math::Vector3<float> start = v0 + vec03 * row;
@@ -78,7 +85,26 @@ std::vector<src::Vertex> src::Grid::GridVerticesWithAttributes(math::Vector3<flo
 		{
 			// Vertex position
 			math::Vector3<float> currVec = start + vecDiv * static_cast<float>(col);
-			currVec[1] += (fmodf((float) std::rand(), 20.0f)) - 10.f;
+
+			float val = 0.0f;
+			float amplitude = 1.0f;
+			float frequency = 1.0f;
+
+			for (int i = 0; i < 12; ++i)
+			{
+				val += PerlinNoise(currVec[0] * frequency * divDenom, currVec[2] * frequency * divDenom) * amplitude;
+				frequency *= 2.0f;
+				amplitude /= 2.0f;
+			}
+			
+			val *= 1.2f * 50.f;
+
+			currVec[1] = val;
+
+			//if (col % 2)
+			//	currVec[1] = 1.0f;
+
+			//printf("(%f, %f) => %f\n", (float) currVec[0], (float) currVec[2], val);
 
 			// Texture coord (UVs)
 			math::Vector2<float> texCoord(
@@ -87,18 +113,25 @@ std::vector<src::Vertex> src::Grid::GridVerticesWithAttributes(math::Vector3<flo
 			);
 
 			// Tangent space vectors (tangent & bi - tangent)
-			math::Vector3<float> vecDivCopy = vecDiv;
-			math::Vector3<float> tangent = vecDivCopy.Normalize();
+
+			math::Vector3<float> tangent;
+			//if (col != 0)
+			//{
+			//	math::Vector3<float> vecDiv2((currVec - vertices[vertices.size() - 1].m_position) * divDenom);
+			//	tangent = math::Vector3<float>(vecDiv2).Normalize();
+			//}
+			//else
+				tangent = math::Vector3<float>(vecDiv).Normalize();
 
 			math::Vector3<float> nextStart = start + vec03;
 			math::Vector3<float> nextEnd = end + vec12;
 			math::Vector3<float> nextVectorDiv = (nextEnd - nextStart) * divDenom;
 			math::Vector3<float> nextRowCurrVec = nextStart + nextVectorDiv * static_cast<float>(col);
-			math::Vector3<float> possibleBiTangent = (nextRowCurrVec - currVec).Normalize();
+			math::Vector3<float> possibleBiTangent = math::Vector3<float>(nextRowCurrVec - currVec).Normalize();
 
 			// Normal
 			math::Vector3<float> normal = tangent.Cross(possibleBiTangent);
-
+			//normal = math::Vector3<float>::Up();
 			Vertex newVertex(currVec, texCoord, normal, tangent, possibleBiTangent);
 			vertices.push_back(newVertex);
 		}
@@ -165,33 +198,145 @@ std::vector<math::Vector3<float>> src::Grid::Line(math::Vector3<float> start, ma
 	return line;
 }
 
-void src::Grid::SetAttribute(unsigned int index, int size, unsigned int offset) const
+void src::Grid::RecalcAttributes(std::vector<Vertex>& vertices, unsigned int div)
+{
+	int perRowVertex = div + 2; 
+
+	for (int i = 0; i < vertices.size(); ++i)
+	{
+		//// Find 4 connecting vertices
+		//math::Vector3<float> leftPos;
+		//math::Vector3<float> rightPos;
+		//math::Vector3<float> upPos;
+		//math::Vector3<float> downPos;
+		//math::Vector3<float> vertexPos = vertices[i].m_position;
+		//
+		//// Left vertex
+		//if (i - 1 >= 0 && float(i) / float(perRowVertex) != 1.0f)
+		//{
+		//	leftPos = vertices[i - 1].m_position;
+		//}
+		//
+		//// Right vertex
+		//if (i + 1 < vertices.size() && float(i + 1) / float(perRowVertex) != 1.0f)
+		//{
+		//	rightPos = vertices[i + 1].m_position;
+		//}
+		//
+		//// Down vertex
+		//if (i - perRowVertex > 0)
+		//{
+		//	downPos = vertices[i - perRowVertex].m_position;
+		//}
+		//
+		//// Up vertex
+		//if (i + perRowVertex < vertices.size())
+		//{
+		//	upPos = vertices[i + perRowVertex].m_position;
+		//}
+		//
+		//// Calculate gradient of each vector
+		////vertices[i].m_normal = math::Vector3<float>(
+		////	leftPos[1] - rightPos[1],
+		////	2.0f,
+		////	downPos[1] - upPos[1]
+		////).Normalize();
+		//
+		//vertices[i].m_tangent = 
+		//	math::Vector3<float>((vertices[i].m_position))
+
+		Vertex leftVertex;
+		Vertex rightVertex;
+		Vertex downVertex;
+		Vertex upVertex;
+
+		// Left vertex
+		if (i - 1 >= 0 && float(i) / float(perRowVertex) != 1.0f)
+		{
+			leftVertex = vertices[i - 1];
+		}
+		
+		// Right vertex
+		if (i + 1 < vertices.size() && float(i + 1) / float(perRowVertex) != 1.0f)
+		{
+			rightVertex = vertices[i + 1];
+		}
+		
+		// Down vertex
+		if (i - perRowVertex > 0)
+		{
+			downVertex = vertices[i - perRowVertex];
+		}
+		
+		// Up vertex
+		if (i + perRowVertex < vertices.size())
+		{
+			upVertex = vertices[i + perRowVertex];
+		}
+
+		math::Vector3<float> leftEdge = leftVertex.m_position - vertices[i].m_position;
+		//math::Vector3<float> rightEdge = rightVertex.m_position - vertices[i].m_position;
+		math::Vector3<float> rightEdge = upVertex.m_position - vertices[i].m_position;
+		//math::Vector3<float> downEdge = downVertex.m_position - vertices[i].m_position;
+		//math::Vector3<float> upEdge = upVertex.m_position - vertices[i].m_position;
+
+		math::Vector2<float> leftDeltaUV = leftVertex.m_texCoord - vertices[i].m_texCoord;
+		//math::Vector2<float> rightDeltaUV = rightVertex.m_texCoord - vertices[i].m_texCoord;
+		math::Vector2<float> rightDeltaUV = upVertex.m_texCoord - vertices[i].m_texCoord;
+		math::Vector2<float> downDeltaUV = downVertex.m_texCoord - vertices[i].m_texCoord;
+		math::Vector2<float> upDeltaUV = upVertex.m_texCoord - vertices[i].m_texCoord;
+
+		float det1 = leftDeltaUV.Cross(rightDeltaUV);
+		
+		if (det1 == 0.0f)
+		{
+			std::printf("Determinant is zero, skipping...\n");
+			continue;
+		}
+		
+		float invDet = 1.0f / det1;
+		
+		vertices[i].m_tangent = ((leftEdge * rightDeltaUV[1] - rightEdge * leftDeltaUV[1]) * invDet).Normalize();
+		vertices[i].m_biTangent = ((leftEdge * -rightDeltaUV[0] + rightEdge * leftEdge[0]) * invDet).Normalize();
+		vertices[i].m_normal = (vertices[i].m_biTangent.Cross(vertices[i].m_tangent)).Normalize();
+
+		//vertices[i].m_normal = -((leftEdge + rightEdge + downEdge + upEdge) * 0.25f);
+	}
+
+}
+
+void src::Grid::SetAttribute(unsigned int& index, int size, unsigned int& offset) const
 {
 	glEnableVertexArrayAttrib(m_vao, index);
 	glVertexArrayAttribBinding(m_vao, index, 0);
 	glVertexArrayAttribFormat(m_vao, index, size, GL_FLOAT, GL_FALSE, offset);
+
+	++index;
+	offset += size * sizeof(float);
 }
 
-void src::Grid::SetData(std::vector<math::Vector3<float>>& vertices, std::vector<int>& indices)
-{
-	// Create buffers
-	glCreateVertexArrays(1, &m_vao);
-	Buffer vbo, ebo;
-	
-	// Set data
-	vbo.SetData(vertices.data(), sizeof(Vertex) * vertices.size());
-	ebo.SetData(indices.data(), sizeof(int) * indices.size());
-
-	// Set attributes
-	SetAttribute(0, 3, 0); // Position attribute
-	SetAttribute(1, 3, 3); // Normal attribute
-	SetAttribute(2, 3, 6); // Tangent attribute
-	SetAttribute(3, 3, 9); // Bi - tangent attribute
-	SetAttribute(4, 2, 12); // Texture coord attribute
-
-	glVertexArrayVertexBuffer(m_vao, 0, vbo, 0, sizeof(Vertex));
-	glVertexArrayElementBuffer(m_vao, ebo);
-}
+//void src::Grid::SetData(std::vector<math::Vector3<float>>& vertices, std::vector<int>& indices)
+//{
+//	// Create buffers
+//	glCreateVertexArrays(1, &m_vao);
+//	Buffer vbo, ebo;
+//	
+//	// Set data
+//	//glNamedBufferData(vbo, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+//
+//	vbo.SetData(vertices.data(), sizeof(Vertex) * vertices.size());
+//	ebo.SetData(indices.data(), sizeof(int) * indices.size());
+//
+//	// Set attributes
+//	SetAttribute(0, 3, 0); // Position attribute
+//	SetAttribute(1, 3, 3); // Normal attribute
+//	SetAttribute(2, 3, 6); // Tangent attribute
+//	SetAttribute(3, 3, 9); // Bi - tangent attribute
+//	SetAttribute(4, 2, 12); // Texture coord attribute
+//
+//	glVertexArrayVertexBuffer(m_vao, 0, vbo, 0, sizeof(Vertex));
+//	glVertexArrayElementBuffer(m_vao, ebo);
+//}
 
 
 void src::Grid::SetData(std::vector<Vertex>& vertices, std::vector<int>& indices)
@@ -201,16 +346,20 @@ void src::Grid::SetData(std::vector<Vertex>& vertices, std::vector<int>& indices
 	Buffer vbo, ebo;
 
 	// Set data
+
 	vbo.SetData(vertices.data(), sizeof(Vertex) * vertices.size());
 	ebo.SetData(indices.data(), sizeof(int) * indices.size());
-
+	
 	// Set attributes
-	SetAttribute(0, 3, 0); // Position attribute
-	SetAttribute(1, 3, 3); // Normal attribute
-	SetAttribute(2, 3, 6); // Tangent attribute
-	SetAttribute(3, 3, 9); // Bi - tangent attribute
-	SetAttribute(4, 2, 12); // Texture coord attribute
+	unsigned int index = 0;
+	unsigned int offset = 0;
 
-	glVertexArrayVertexBuffer(m_vao, 0, vbo, 0, sizeof(Vertex));
+	SetAttribute(index, 3, offset); // Position attribute
+	SetAttribute(index, 3, offset); // Normal attribute
+	SetAttribute(index, 3, offset); // Tangent attribute
+	SetAttribute(index, 3, offset); // Bi - tangent attribute
+	SetAttribute(index, 2, offset); // Texture coord attribute
+
 	glVertexArrayElementBuffer(m_vao, ebo);
+	glVertexArrayVertexBuffer(m_vao, 0, vbo, 0, offset);
 }
