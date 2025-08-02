@@ -3,7 +3,9 @@
 layout (vertices = 4) out;
 
 in vec2 uvs[];
+in vec3 normal[];
 out vec2 uvsCoord[];
+out vec3 Normal[];
 
 layout(location = 0) uniform vec2 cursor;
 vec4 cursorPos = vec4(2.0 * cursor - 1.0, 0.0, 0.0);
@@ -44,6 +46,8 @@ void main()
 
         gl_TessLevelInner[0] = max(tes1, tes3); // up down for quads
         gl_TessLevelInner[1] = max(tes0, tes2); // left right for quads
+
     }
 
+    Normal[gl_InvocationID] = normal[gl_InvocationID];
 }

@@ -10,9 +10,11 @@ uniform mat4 view;
 uniform mat4 projection;
 
 out vec2 uvs;
+out vec3 normal;
 
 void main()
 {
    uvs = aTexCoord;
    gl_Position = projection * view * vec4(aPos, 1.0);  
+   normal = aNormal;
 }

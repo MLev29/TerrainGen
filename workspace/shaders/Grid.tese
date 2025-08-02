@@ -3,7 +3,10 @@
 layout (quads, equal_spacing, ccw) in;
 
 in vec2 uvsCoord[];
+in vec3 Normal[];
+
 out vec2 uvs;
+out vec3 normal;
 
 void main()
 {
@@ -30,4 +33,6 @@ void main()
 
     gl_Position = pos;
     uvs = texCoord;
+
+    normal = Normal[0].xyz;
 }
