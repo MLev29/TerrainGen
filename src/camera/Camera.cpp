@@ -79,8 +79,6 @@ void src::Camera::CameraInput(GLFWwindow* windowPtr, float deltaTime)
 		m_position -= math::Vector3<float>::Up() * m_speed * deltaTime;
 	else if (glfwGetKey(windowPtr, GLFW_KEY_E) == GLFW_PRESS)
 		m_position += math::Vector3<float>::Up() * m_speed * deltaTime;
-
-	//std::printf("pos: %f, %f, %f\n", m_position[0], m_position[1], m_position[2]);
 }
 
 void src::Camera::MouseMotion(math::Vector2<float> const& cursorPos, float deltaTime)
