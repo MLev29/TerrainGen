@@ -25,11 +25,11 @@ int main()
 	src::Camera camera({0.0f, 0.0f, 0.0f}, 15.0f);
 
 	auto gridShader = src::ResourceManager::LoadShader(
-		"GridShader", 
-		"shaders/Grid.vert", 
-		"shaders/Grid.frag",
-		"shaders/Grid.tesc",
-		"shaders/Grid.tese"
+		"TerrainShader", 
+		"shaders/Terrain.vert", 
+		"shaders/Terrain.frag",
+		"shaders/Terrain.tesc",
+		"shaders/Terrain.tese"
 	);
 	src::Grid grid({0.0f, 0.0f}, {100.0f, 100.0f}, 100);
 	glEnable(GL_BLEND);
@@ -52,7 +52,7 @@ int main()
 		src::g_time.Update();
 		src::InputHandler::UpdateKeyState();
 
-		// Camera update // TODO: find better place for this code
+		// Camera update
 		camera.CameraInput(window, src::g_time.GetDeltaTime());
 		camera.MouseMotion(src::InputHandler::GetCursorPosition<float>(), src::g_time.GetDeltaTime());
 		auto viewMatrix = camera.GetViewMatrix();
@@ -60,16 +60,14 @@ int main()
 		
 		src::Clear();
 
-		// TODO: Find better place for this
+		// Set uniform values
 		gridShader->Use();
 		gridShader->Set("view", &viewMatrix);
 		gridShader->Set("projection", &projMatrix);
 
-		auto cursorPos = src::InputHandler::GetCursorPosition<float>();
-		math::Vector2<float> cursorPosData(cursorPos[0] / window.GetWidth<float>(), 1.0f - cursorPos[1] / window.GetHeight<float>()/*camera.GetPosition()[0], camera.GetPosition()[2]*/);
-		gridShader->Set("cursor", cursorPosData);
+		gridShader->Set("genCount", 6);
 
-		// draw grid // TODO: find better place for this
+		// draw grid
 		grid.Update();
 
 		window.Update();
