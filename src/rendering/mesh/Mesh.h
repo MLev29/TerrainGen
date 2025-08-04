@@ -15,13 +15,10 @@ namespace src
 		~Grid(void);
 
 		void Update(void);
+	
 	private:
-		std::vector<math::Vector3<float>> GridVertices(math::Vector3<float> v0, math::Vector3<float> v1, math::Vector3<float> v2, math::Vector3<float> v3, unsigned int div);
-		std::vector<struct Vertex> GridVerticesWithAttributes(math::Vector3<float> v0, math::Vector3<float> v1, math::Vector3<float> v2, math::Vector3<float> v3, unsigned int div);
+		std::vector<struct Vertex> GridVertices(math::Vector3<float> v0, math::Vector3<float> v1, math::Vector3<float> v2, math::Vector3<float> v3, unsigned int div);
 		std::vector<int> GridIndices(unsigned int div);
-		std::vector<int> GridTesIndices(unsigned int div);
-		std::vector<math::Vector3<float>> Line(math::Vector3<float> start, math::Vector3<float> end, int div);
-		void RecalcAttributes(std::vector<Vertex>& vertices, unsigned int div);
 
 		void SetAttribute(unsigned int& index, int size, unsigned int& offset) const;
 		void SetData(std::vector<math::Vector3<float>>& vertices, std::vector<int>& indices);
