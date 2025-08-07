@@ -31,19 +31,16 @@ int main()
 		"shaders/Terrain.tesc",
 		"shaders/Terrain.tese"
 	);
-	src::Grid grid({0.0f, 0.0f}, {100.0f, 100.0f}, 100);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	src::Grid grid({0.0f, 0.0f}, {100.0f, 100.0f}, 10);
+
 #if FILL == 0
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #else
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 #endif
 
-
-
 	glPatchParameteri(GL_PATCH_VERTICES, 4);
-	//glDisable(GL_CULL_FACE);
+
 	src::InputHandler::SetCursorMode(src::ECursorMode::MODE_DISABLED);
 
 	while (!window.ShouldWindowClose())
@@ -65,7 +62,7 @@ int main()
 		gridShader->Set("view", &viewMatrix);
 		gridShader->Set("projection", &projMatrix);
 
-		gridShader->Set("genCount", 6);
+		gridShader->Set("divCount", 16);
 
 		// draw grid
 		grid.Update();

@@ -11,5 +11,5 @@ void main()
     float terrainSteepness = abs(dot(upDir, normal));
     FragColor = vec4(vec3((terrainSteepness * 0.75) + 0.25), 1.0);
 
-    //FragColor = vec4(uvs + 1.0, 0.000, 1.0)/2.0;
+    FragColor = vec4(uvs + 1.0, 0.000, 1.0)/2.0;
 }

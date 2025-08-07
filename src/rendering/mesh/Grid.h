@@ -17,7 +17,12 @@ namespace src
 		void Update(void);
 	
 	private:
-		std::vector<struct Vertex> GridVertices(math::Vector3<float> v0, math::Vector3<float> v1, math::Vector3<float> v2, math::Vector3<float> v3, unsigned int div);
+		std::vector<struct Vertex> GridVertices(
+			math::Vector3<float> v0, math::Vector3<float> v1, 
+			math::Vector3<float> v2, math::Vector3<float> v3, 
+			unsigned int div
+		);
+
 		std::vector<int> GridIndices(unsigned int div);
 
 		void SetAttribute(unsigned int& index, int size, unsigned int& offset) const;

@@ -8,7 +8,6 @@
 src::Grid::Grid(math::Vector2<float> minPos, math::Vector2<float> maxPos, unsigned int divCount)
 	: m_vao(0), m_indexCount(0)
 {
-
 	// Calculate data for each vertex in grid for VBO buffer
 	std::vector<Vertex> vertices = GridVertices(
 		{minPos[0], 0.0f, minPos[1]}, // bottom left grid corner
@@ -38,10 +37,10 @@ src::Grid::~Grid(void)
 
 void src::Grid::Update(void)
 {
-	// Draw grid
-	glBindVertexArray(m_vao);
-	glDrawElements(GL_PATCHES, m_indexCount, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+	// Draw grid with tessellation
+	glBindVertexArray(m_vao); // Bind vertex array
+	glDrawElements(GL_PATCHES, m_indexCount, GL_UNSIGNED_INT, 0); // Draw
+	glBindVertexArray(0); // Unbind vertex array
 }
 
 std::vector<src::Vertex> src::Grid::GridVertices(math::Vector3<float> v0, math::Vector3<float> v1, math::Vector3<float> v2, math::Vector3<float> v3, unsigned int div)
@@ -75,13 +74,13 @@ std::vector<src::Vertex> src::Grid::GridVertices(math::Vector3<float> v0, math::
 			for (int i = 0; i < 12; ++i)
 			{
 				val += PerlinNoise(currPos[0] * frequency * divDenom, currPos[2] * frequency * divDenom) * amplitude;
-				frequency *= 2.0f;
-				amplitude /= 2.0f;
+				//frequency *= 2.0f;
+				//amplitude /= 2.0f;
 			}
 
-			val *= 1.2f * 50.f;
+			val *= 1.2f * 1.f;
 
-			currPos[1] = val;
+			//currPos[1] = val;
 
 			// Texture coord (UVs)
 			math::Vector2<float> texCoord(

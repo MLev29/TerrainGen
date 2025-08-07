@@ -35,15 +35,12 @@ math::Vector2<float> Hash(int x, int y)
     unsigned a = x;
     unsigned b = y;
     a *= 3284157443;
-    //a *= std::rand();
 
     b ^= a << s | a >> (w - s);
     b *= 1911520717;
-    //b *= std::srand();
 
     a ^= b << s | b >> (w - s);
     a *= 2048419325;
-    //a *= std::rand();
 
     float random = a * (PI / ~(~0u >> 1));
 
@@ -68,18 +65,3 @@ float Interpolate(float a, float b, float weight)
     // Cubic interpolation
     return (b - a) * (3.0f - weight * 2.0f) * weight * weight + a;
 }
-
-//float PerlinNoiseV2(float x, float y)
-//{
-//    return 0.0f;
-//}
-//
-//math::Vector2<float> Grad(math::Vector2<float> point)
-//{
-//    return math::Vector2<float>();
-//}
-//
-//float Fade(float t)
-//{
-//    return t * t * t * (t * (t * 6.0f - 15.0f) + 10.0f);
-//}
