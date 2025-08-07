@@ -1,7 +1,6 @@
 #include "Grid.h"
 #include "utility/Buffer.h"
 #include "rendering/mesh/Vertex.h"
-#include "utility/PerlinNoise.h"
 
 #include "glad/glad.h"
 
@@ -66,21 +65,6 @@ std::vector<src::Vertex> src::Grid::GridVertices(math::Vector3<float> v0, math::
 		{
 			// Vertex position
 			math::Vector3<float> currPos = start + vecDiv * static_cast<float>(col);
-
-			float val = 0.0f;
-			float amplitude = 1.0f;
-			float frequency = 1.0f;
-
-			for (int i = 0; i < 12; ++i)
-			{
-				val += PerlinNoise(currPos[0] * frequency * divDenom, currPos[2] * frequency * divDenom) * amplitude;
-				//frequency *= 2.0f;
-				//amplitude /= 2.0f;
-			}
-
-			val *= 1.2f * 1.f;
-
-			//currPos[1] = val;
 
 			// Texture coord (UVs)
 			math::Vector2<float> texCoord(
