@@ -14,6 +14,7 @@
 #include <iostream>
 
 #define FILL 0
+#define SUB_DIVISIONS 16 // Modify amount of sub divisions (min = 1)
 
 int main()
 {
@@ -62,7 +63,7 @@ int main()
 		gridShader->Set("view", &viewMatrix);
 		gridShader->Set("projection", &projMatrix);
 
-		gridShader->Set("divCount", 16);
+		gridShader->Set("divCount", SUB_DIVISIONS);
 
 		// draw grid
 		grid.Update();
